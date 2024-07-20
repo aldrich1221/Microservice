@@ -1,48 +1,47 @@
 package com.spring.microservice.model;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("course")
+@Document(collection = "courses")
 public class Course {
+
     @Id
+    private String id;
     private String courseId;
-
     private String courseName;
+    private String description;
 
-    private String courseDescription;
-
-    private String courseType;
-
+    // Getters and setters
     public String getId() {
-        return courseId;
+        return id;
     }
 
     public void setId(String id) {
-        this.courseId = id;
+        this.id = id;
     }
 
-    public String getName() {
+    public String getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(String courseId) {
+        this.courseId = courseId;
+    }
+
+    public String getCourseName() {
         return courseName;
     }
 
-    public void setName(String name) {
-        this.courseName = name;
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
     }
 
     public String getDescription() {
-        return courseDescription;
+        return description;
     }
 
-    public void setDescription(String name) {
-        this.courseDescription = name;
+    public void setDescription(String description) {
+        this.description = description;
     }
-
-    public String getCourseType() {
-        return courseType;
-    }
-
-    public void setCourseType(String courseType) {
-        this.courseType = courseType;
-    }
-
 }

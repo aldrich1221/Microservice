@@ -1,21 +1,76 @@
+version: '3.8'
+
 services:
-  app:
-    build: .
+  mongodb:
+    image: mongo
+    container_name: mongodb_container
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=test
+      - MONGO_INITDB_ROOT_PASSWORD=test
+      - MONGO_INITDB_DATABASE=microservice_test_db
+    networks:
+      - mynetwork
+
+  springbootapp:
+    image: spring-app-image
+    container_name: spring-app-container
+    depends_on:
+      - mongodb
     ports:
       - "8080:8080"
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/microservice_test_db
-  resilience4j:
-    circuitbreaker:
-      configs:
-        default:
-          registerHealthIndicator: true
-          slidingWindowSize: 10
-          permittedNumberOfCallsInHalfOpenState: 3
-          waitDurationInOpenState: 10000
-          failureRateThreshold: 50
-          eventConsumerBufferSize: 10
-      instances:
-        myService:
-          baseConfig: default
+    environment:
+      HOST: mongodb
+#      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/microservice_test_db
+      SPRING_DATA_MONGODB_DATABASE: microservice_test_db
+      SPRING_DATA_MONGODB_USERNAME: test
+      SPRING_DATA_MONGODB_PASSWORD: test
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
+
+
+#services:
+#  mongodb:
+#    image: mongo
+#    container_name: mongodb_container
+#    ports:
+#      - "27017:27017"
+#    volumes:
+#      - ./data:/data/db
+#    environment:
+#      - MONGO_INITDB_ROOT_USERNAME=test
+#      - MONGO_INITDB_ROOT_PASSWORD=test
+#      - MONGO_INITDB_DATABASE=microservice_test_db
+#  springbootapp:
+#    image: spring-app-image
+#    container_name: spring-app-container
+#    depends_on:
+#      - mongodb
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      HOST: mongodb
+##      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/microservice_test_db
+#      DATABASE: microservice_test_db
+#      USERNAME: test
+#      PASSWORD: test
+#  resilience4j:
+#    circuitbreaker:
+#      configs:
+#        default:
+#          registerHealthIndicator: true
+#          slidingWindowSize: 10
+#          permittedNumberOfCallsInHalfOpenState: 3
+#          waitDurationInOpenState: 10000
+#          failureRateThreshold: 50
+#          eventConsumerBufferSize: 10
+#      instances:
+#        myService:
+#          baseConfig: default
