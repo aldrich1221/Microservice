@@ -1,0 +1,35 @@
+
+
+services:
+  consul:
+    image: consul:1.15.4
+    ports:
+      - "8500:8500"
+    command: "consul agent -dev -client=0.0.0.0 -ui" 
+    networks:
+      - app-network
+  apigateway:
+    image: api-gateway-image
+    container_name: api-gateway-container
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+  myapp:
+    image: bulkhead-app-image
+    container_name: bulkhead-app-container
+
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONSUL_ADDRESS=http://consul:8500
+    ports:
+      - "1111:1111"
+    depends_on:
+      - consul
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+  
